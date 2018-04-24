@@ -1,0 +1,11 @@
+#!/bin/bash
+
+dir=`dirname $0`
+
+os=`uname -s | tr '[:upper:]' '[:lower:]'`
+arch=`uname -m | tr '[:upper:]' '[:lower:]'`
+
+exe="${dir}/gm-gem_${os}_${arch}"
+
+# This is our pre-built version
+exec "$exe" "$@"
