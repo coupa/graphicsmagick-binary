@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = "graphicsmagick-binary"
-  s.version = "1.0.0"
+  s.version = "1.0.10"
   s.license = "MIT"
   s.author = "Johnny Lai"
   s.email = "johnny.lai@coupa.com"
