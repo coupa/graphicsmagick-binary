@@ -1,0 +1,3 @@
+[submodule "make/baker"]
+	path = make/baker
+	url = https://github.com/johnny-lai/baker.git
