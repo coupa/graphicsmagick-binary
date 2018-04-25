@@ -1,11 +1,8 @@
-BEDROCK_ROOT := $(abspath make/baker)
-include $(BEDROCK_ROOT)/boot.mk
+BUILD_ROOT ?= $(SRCROOT)/tmp
+VENDOR_ROOT = $(SRCROOT)/vendor
 
 MAJOR_VERSION = 1
 MINOR_VERSION = 0
-
-BUILD_ROOT ?= $(SRCROOT)/tmp
-VENDOR_ROOT = $(SRCROOT)/vendor
 
 GRAPHICSMAGICK_ROOT = $(BUILD_ROOT)/gm
 GRAPHICSMAGICK_TAR_XZ = $(VENDOR_ROOT)/GraphicsMagick-1.3.28.tar.xz
@@ -13,16 +10,18 @@ GRAPHICSMAGICK_EXE = $(GRAPHICSMAGICK_ROOT)/utilities/gm
 
 DOCKER_DEVIMAGE = gcc:7
 
+BEDROCK_ROOT := $(abspath make/baker)
+include $(BEDROCK_ROOT)/boot.mk
+
 build: $(GRAPHICSMAGICK_EXE)
 	if [ -n "$$DEV_UID" ]; then \
 		chown -R $$DEV_UID:$$DEV_GID $(BUILD_ROOT); \
 	fi
 
+clean: graphicsmagick-clean gem-clean
 
-clean: file-clean gem-clean
-
-#- Build rules for file --------------------------------------------------------
-file-clean:
+#- Build rules for graphicsmagick ----------------------------------------------
+graphicsmagick-clean:
 	rm -rf $(GRAPHICSMAGICK_ROOT)
 
 $(GRAPHICSMAGICK_EXE): $(GRAPHICSMAGICK_ROOT)
@@ -36,9 +35,9 @@ $(GRAPHICSMAGICK_ROOT):
 	mkdir -p $(GRAPHICSMAGICK_ROOT)
 	cd $(GRAPHICSMAGICK_ROOT) && xz -dc $(GRAPHICSMAGICK_TAR_XZ) | tar -xvf - --strip-components 1
 
-#- Build rules for file-binary gem ---------------------------------------------
+#- Build rules for graphicsmagick-binary gem -----------------------------------
 GEM_BRANCH = releases
-GEM_ROOT = $(TMP_ROOT)/graphicsmagick-binary
+GEM_ROOT = $(BUILD_ROOT)/graphicsmagick-binary
 GEM_SOURCES = $(GEM_ROOT)/bin/gm-gem_linux_x86_64
 
 gem-publish: gem-rebuild gem-push
@@ -66,7 +65,8 @@ gem-clean:
 	rm -rf $(GEM_ROOT)
 
 $(GEM_ROOT):
-	cd $(TMP_ROOT) && git clone --branch $(GEM_BRANCH) git@github.com:coupa/graphicsmagick-binary.git
+	mkdir -p $(GEM_ROOT)
+	cd $(GEM_ROOT) && git clone --branch $(GEM_BRANCH) git@github.com:coupa/graphicsmagick-binary.git .
 
 $(GEM_ROOT)/bin/gm-gem_linux_x86_64: $(GRAPHICSMAGICK_EXE) $(GEM_ROOT)
 	cp $(GRAPHICSMAGICK_EXE) $@
