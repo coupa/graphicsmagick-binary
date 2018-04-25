@@ -15,7 +15,7 @@ include $(BEDROCK_ROOT)/boot.mk
 
 build: $(GRAPHICSMAGICK_EXE)
 	if [ -n "$$DEV_UID" ]; then \
-		chown -R $$DEV_UID:$$DEV_GID $(BUILD_ROOT); \
+		chown -R $$DEV_UID:$$DEV_GID $(SRCROOT)/tmp; \
 	fi
 
 clean: graphicsmagick-clean gem-clean
